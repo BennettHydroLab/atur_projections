@@ -1,0 +1,213 @@
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap');
+
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+:root {
+  --bg:        #0d1117;
+  --surface:   #161b22;
+  --border:    #30363d;
+  --text:      #e6edf3;
+  --muted:     #8b949e;
+  --prec:      #38bdf8;
+  --temp:      #fb923c;
+  --accent:    #58a6ff;
+  --radius:    10px;
+  --shadow:    0 4px 24px rgba(0,0,0,.45);
+}
+
+html { scroll-behavior: smooth; }
+
+body {
+  font-family: 'Inter', sans-serif;
+  background: var(--bg);
+  color: var(--text);
+  min-height: 100vh;
+  font-size: 15px;
+  line-height: 1.6;
+}
+
+/* ── Nav ── */
+nav {
+  position: sticky; top: 0;
+  background: rgba(13,17,23,.88);
+  backdrop-filter: blur(12px);
+  border-bottom: 1px solid var(--border);
+  z-index: 100;
+  display: flex; align-items: center;
+  padding: 0 2rem;
+  height: 56px;
+  gap: 2rem;
+}
+nav .brand {
+  font-weight: 700; font-size: 1rem;
+  color: var(--text); text-decoration: none;
+  letter-spacing: -.02em;
+}
+nav a {
+  color: var(--muted); text-decoration: none;
+  font-size: .9rem; padding: .25rem 0;
+  border-bottom: 2px solid transparent;
+  transition: color .2s, border-color .2s;
+}
+nav a:hover, nav a.active {
+  color: var(--text);
+  border-bottom-color: var(--accent);
+}
+
+/* ── Hero ── */
+.hero {
+  padding: 4rem 2rem 3rem;
+  max-width: 900px; margin: 0 auto;
+}
+.hero h1 {
+  font-size: clamp(1.8rem, 4vw, 2.6rem);
+  font-weight: 700; letter-spacing: -.03em;
+  line-height: 1.2; margin-bottom: .75rem;
+}
+.hero p { color: var(--muted); max-width: 60ch; }
+
+/* ── Containers ── */
+.container { max-width: 1100px; margin: 0 auto; padding: 0 2rem 4rem; }
+
+/* ── Cards / grid ── */
+.card-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+  gap: 1rem;
+  margin-top: 2rem;
+}
+.card {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: 1.25rem;
+  transition: border-color .2s, transform .2s, box-shadow .2s;
+}
+.card:hover {
+  border-color: var(--accent);
+  transform: translateY(-2px);
+  box-shadow: var(--shadow);
+}
+.card a { text-decoration: none; color: inherit; display: block; }
+.card .card-label {
+  font-size: .75rem; text-transform: uppercase;
+  letter-spacing: .08em; color: var(--muted);
+  margin-bottom: .4rem;
+}
+.card h3 { font-size: 1rem; font-weight: 600; }
+
+/* ── Tabs ── */
+.tabs { display: flex; gap: .5rem; margin-bottom: 1.5rem; flex-wrap: wrap; }
+.tab-btn {
+  padding: .45rem 1.1rem;
+  border: 1px solid var(--border);
+  border-radius: 999px;
+  background: var(--surface);
+  color: var(--muted); cursor: pointer;
+  font-family: inherit; font-size: .875rem;
+  transition: all .2s;
+}
+.tab-btn:hover { color: var(--text); border-color: var(--accent); }
+.tab-btn.active { background: var(--accent); border-color: var(--accent); color: #000; font-weight: 600; }
+.tab-panel { display: none; }
+.tab-panel.active { display: block; }
+
+/* ── Figures ── */
+.fig-group { margin-bottom: 2rem; }
+.fig-group h3 { font-size: 1rem; font-weight: 600; color: var(--muted); margin-bottom: .75rem; }
+.fig-row {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(420px, 1fr));
+  gap: 1rem;
+}
+.fig-wrap {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  overflow: hidden;
+  transition: box-shadow .2s, border-color .2s;
+}
+.fig-wrap:hover { border-color: var(--accent); box-shadow: var(--shadow); }
+.fig-wrap img { width: 100%; height: auto; display: block; }
+.fig-caption {
+  padding: .5rem .75rem;
+  font-size: .8rem; color: var(--muted);
+}
+
+/* ── Controls ── */
+.controls {
+  display: flex; flex-wrap: wrap; align-items: center;
+  gap: .75rem; margin-bottom: 1.5rem;
+}
+.controls label { font-size: .875rem; color: var(--muted); }
+select, input[type="text"] {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  color: var(--text);
+  font-family: inherit; font-size: .875rem;
+  padding: .4rem .75rem;
+  transition: border-color .2s;
+}
+select:focus, input[type="text"]:focus { outline: none; border-color: var(--accent); }
+select { cursor: pointer; }
+
+/* ── Table ── */
+.table-wrap {
+  overflow-x: auto;
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+}
+table {
+  width: 100%; border-collapse: collapse;
+  font-size: .85rem;
+}
+thead th {
+  background: var(--surface);
+  padding: .65rem 1rem;
+  text-align: left;
+  font-weight: 600; font-size: .8rem;
+  text-transform: uppercase; letter-spacing: .06em;
+  color: var(--muted);
+  border-bottom: 1px solid var(--border);
+  cursor: pointer; user-select: none;
+  white-space: nowrap;
+}
+thead th:hover { color: var(--text); }
+thead th .sort-arrow { margin-left: .3em; opacity: .4; }
+thead th.sorted .sort-arrow { opacity: 1; color: var(--accent); }
+tbody tr { border-bottom: 1px solid var(--border); transition: background .15s; }
+tbody tr:last-child { border-bottom: none; }
+tbody tr:hover { background: rgba(255,255,255,.03); }
+tbody td { padding: .6rem 1rem; }
+tbody td.num { font-variant-numeric: tabular-nums; text-align: right; }
+td.pos { color: #4ade80; }
+td.neg { color: #f87171; }
+
+/* ── GCM selector ── */
+#gcm-select { font-size: 1rem; padding: .55rem 1rem; min-width: 280px; }
+
+/* ── Section heading ── */
+.section-title {
+  font-size: 1.15rem; font-weight: 600;
+  margin-bottom: 1.25rem;
+  padding-bottom: .5rem;
+  border-bottom: 1px solid var(--border);
+}
+.badge {
+  display: inline-block;
+  padding: .15rem .55rem;
+  border-radius: 999px;
+  font-size: .75rem; font-weight: 600;
+  margin-left: .5rem;
+}
+.badge-prec { background: rgba(56,189,248,.15); color: var(--prec); }
+.badge-temp { background: rgba(251,146,60,.15); color: var(--temp); }
+
+/* ── Responsive ── */
+@media (max-width: 600px) {
+  nav { gap: 1rem; padding: 0 1rem; }
+  .hero { padding: 2.5rem 1rem 2rem; }
+  .container { padding: 0 1rem 3rem; }
+  .fig-row { grid-template-columns: 1fr; }
+}

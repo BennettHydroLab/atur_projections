@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>ATUR Climate Projections</title>
+  <link rel="stylesheet" href="styles.css"/>
+</head>
+<body>
+<nav>
+  <a class="brand" href="index.html">ATUR Projections</a>
+  <a href="index.html" class="active">Home</a>
+  <a href="ensemble.html">Ensemble</a>
+  <a href="gcm.html">Per-GCM</a>
+</nav>
+
+<div class="hero">
+  <h1>ATUR Climate Projections</h1>
+  <p>End-of-century vs. historical climate deltas for Arizona groundwater subbasins — temperature (K) and precipitation (%) — derived from 11 bias-corrected CMIP6 GCMs under SSP3-7.0.</p>
+</div>
+
+<div class="container">
+  <div class="section-title">Explore results</div>
+  <div class="card-grid">
+    <div class="card">
+      <a href="ensemble.html">
+        <div class="card-label">Ensemble summary</div>
+        <h3>All-model mean, spread &amp; percentiles</h3>
+      </a>
+    </div>
+    <div class="card">
+      <a href="gcm.html">
+        <div class="card-label">Per-GCM browser</div>
+        <h3>Individual model figures &amp; maps</h3>
+      </a>
+    </div>
+  </div>
+
+  <div class="section-title" style="margin-top:3rem;">Ensemble figures</div>
+
+  <div class="tabs">
+    <button class="tab-btn active" data-tab="prec">Precipitation</button>
+    <button class="tab-btn" data-tab="temp">Temperature</button>
+  </div>
+
+  <div id="tab-prec" class="tab-panel active">
+    <div class="fig-row">
+      <div class="fig-wrap">
+        <img src="../results/figures/ensemble_prec_delta_all_months.png" alt="Ensemble precip delta all months"/>
+        <div class="fig-caption">Monthly precipitation Δ — ensemble mean choropleth</div>
+      </div>
+      <div class="fig-wrap">
+        <img src="../results/figures/ensemble_prec_delta_spaghetti.png" alt="Ensemble precip spaghetti"/>
+        <div class="fig-caption">Precipitation Δ — spaghetti plot across GCMs</div>
+      </div>
+    </div>
+  </div>
+
+  <div id="tab-temp" class="tab-panel">
+    <div class="fig-row">
+      <div class="fig-wrap">
+        <img src="../results/figures/ensemble_t2_delta_all_months.png" alt="Ensemble temperature delta all months"/>
+        <div class="fig-caption">Monthly temperature Δ — ensemble mean choropleth</div>
+      </div>
+      <div class="fig-wrap">
+        <img src="../results/figures/ensemble_t2_delta_spaghetti.png" alt="Ensemble temperature spaghetti"/>
+        <div class="fig-caption">Temperature Δ — spaghetti plot across GCMs</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="section-title" style="margin-top:3rem;">Annual deviations — ensemble</div>
+  <div class="fig-wrap" style="max-width:820px;">
+    <img src="../results/figures/timeseries_annual_deviations.png" alt="Annual deviations timeseries"/>
+    <div class="fig-caption">Annual deviation timeseries — ensemble</div>
+  </div>
+</div>
+
+<script>
+document.querySelectorAll('.tab-btn').forEach(btn => {
+  btn.addEventListener('click', () => {
+    document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+    document.querySelectorAll('.tab-panel').forEach(p => p.classList.remove('active'));
+    btn.classList.add('active');
+    document.getElementById('tab-' + btn.dataset.tab).classList.add('active');
+  });
+});
+</script>
+</body>
+</html>

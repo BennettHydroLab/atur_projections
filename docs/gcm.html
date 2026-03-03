@@ -1,0 +1,115 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Per-GCM — ATUR Projections</title>
+    <link rel="stylesheet" href="styles.css" />
+</head>
+
+<body>
+    <nav>
+        <a class="brand" href="index.html">ATUR Projections</a>
+        <a href="index.html">Home</a>
+        <a href="ensemble.html">Ensemble</a>
+        <a href="gcm.html" class="active">Per-GCM</a>
+    </nav>
+
+    <div class="hero">
+        <h1>Per-GCM Browser</h1>
+        <p>Select a model to explore its precipitation and temperature delta maps, spaghetti plots, and annual deviation
+            timeseries.</p>
+    </div>
+
+    <div class="container">
+        <div class="controls">
+            <label for="gcm-select">Model</label>
+            <select id="gcm-select"></select>
+
+            <label for="var-select">Variable</label>
+            <select id="var-select">
+                <option value="both">Both</option>
+                <option value="prec">Precipitation</option>
+                <option value="temp">Temperature</option>
+            </select>
+        </div>
+
+        <div id="gcm-figures"></div>
+    </div>
+
+    <script>
+        const GCMS = [
+            { id: 'access-cm2_r5i1p1f1', label: 'ACCESS-CM2 r5i1p1f1' },
+            { id: 'canesm5_r1i1p2f1', label: 'CanESM5 r1i1p2f1' },
+            { id: 'cesm2_r11i1p1f1', label: 'CESM2 r11i1p1f1' },
+            { id: 'cnrm-esm2-1_r1i1p1f2', label: 'CNRM-ESM2-1 r1i1p1f2' },
+            { id: 'ec-earth3_r1i1p1f1', label: 'EC-Earth3 r1i1p1f1' },
+            { id: 'ec-earth3-veg_r1i1p1f1', label: 'EC-Earth3-Veg r1i1p1f1' },
+            { id: 'fgoals-g3_r1i1p1f1', label: 'FGOALS-g3 r1i1p1f1' },
+            { id: 'miroc6_r1i1p1f1', label: 'MIROC6 r1i1p1f1' },
+            { id: 'mpi-esm1-2-hr_r3i1p1f1', label: 'MPI-ESM1-2-HR r3i1p1f1' },
+            { id: 'mpi-esm1-2-lr_r7i1p1f1', label: 'MPI-ESM1-2-LR r7i1p1f1' },
+            { id: 'taiesm1_r1i1p1f1', label: 'TaiESM1 r1i1p1f1' },
+        ];
+
+        const sel = document.getElementById('gcm-select');
+        const varSel = document.getElementById('var-select');
+        const figDiv = document.getElementById('gcm-figures');
+
+        GCMS.forEach(g => {
+            const opt = document.createElement('option');
+            opt.value = g.id; opt.textContent = g.label;
+            sel.appendChild(opt);
+        });
+
+        function fig(src, caption) {
+            return `<div class="fig-wrap"><img src="${src}" alt="${caption}" loading="lazy"/><div class="fig-caption">${caption}</div></div>`;
+        }
+
+        function render() {
+            const gcmId = sel.value;
+            const varStr = varSel.value;
+            const base = `../results/${gcmId}/figures`;
+            let html = '';
+
+            const showPrec = varStr === 'both' || varStr === 'prec';
+            const showTemp = varStr === 'both' || varStr === 'temp';
+
+            if (showPrec) {
+                html += `<div class="fig-group">
+      <h3>Precipitation Δ <span class="badge badge-prec">%</span></h3>
+      <div class="fig-row">
+        ${fig(`${base}/prec_delta_all_months.png`, 'Monthly choropleth maps')}
+        ${fig(`${base}/prec_delta_spaghetti.png`, 'Spaghetti plot by subbasin')}
+      </div>
+    </div>`;
+            }
+
+            if (showTemp) {
+                html += `<div class="fig-group">
+      <h3>Temperature Δ <span class="badge badge-temp">K</span></h3>
+      <div class="fig-row">
+        ${fig(`${base}/t2_delta_all_months.png`, 'Monthly choropleth maps')}
+        ${fig(`${base}/t2_delta_spaghetti.png`, 'Spaghetti plot by subbasin')}
+      </div>
+    </div>`;
+            }
+
+            html += `<div class="fig-group">
+    <h3>Annual deviations</h3>
+    <div class="fig-wrap" style="max-width:820px;">
+      ${fig(`${base}/timeseries_annual_deviations.png`, 'Annual deviation timeseries').replace('<div class="fig-wrap">', '').replace('</div>', '')}
+    </div>
+  </div>`;
+
+            figDiv.innerHTML = html;
+        }
+
+        sel.addEventListener('change', render);
+        varSel.addEventListener('change', render);
+        render();
+    </script>
+</body>
+
+</html>
