@@ -21,6 +21,8 @@ from .catalog import (
     EXP_SSP370,
     HIST_YEARS,
     FUTURE_YEARS,
+    ALL_HIST_YEARS,
+    ALL_SSP370_YEARS,
 )
 from .grid import weighted_basin_mean
 
@@ -156,16 +158,16 @@ def compute_delta(
     Returns:
         Delta DataArray shape (12, ny, nx).
         - t2:   absolute difference in K (equivalent to °C change)
-        - prec: percent change = (fut - hist) / hist * 100
+        - prec: absolute difference in mm day⁻¹ (fut - hist)
     """
     if variable == "t2":
         delta = fut_clim - hist_clim
         delta.attrs["units"] = "K"
         delta.attrs["long_name"] = "2-m temperature change (future - historical)"
     elif variable == "prec":
-        delta = (fut_clim - hist_clim) / hist_clim * 100.0
-        delta.attrs["units"] = "%"
-        delta.attrs["long_name"] = "Precipitation percent change"
+        delta = fut_clim - hist_clim
+        delta.attrs["units"] = "mm day-1"
+        delta.attrs["long_name"] = "Precipitation change (future - historical)"
     else:
         delta = fut_clim - hist_clim
         delta.attrs["long_name"] = f"{variable} change (future - historical)"
@@ -250,6 +252,65 @@ def process_gcm(
         print(f"  [{gcm_label}] {variable}: computing delta and aggregating ...")
         delta = compute_delta(hist_clim, fut_clim, variable)
         df = aggregate_to_subbasins(delta, masks, cos_weights)
+        results[variable] = df
+
+    return results if results else None
+
+
+# ---------------------------------------------------------------------------
+# Full-record annual timeseries
+# ---------------------------------------------------------------------------
+
+def build_annual_timeseries(
+    fs: s3fs.S3FileSystem,
+    gcm_info: dict,
+    masks: dict[str, np.ndarray],
+    cos_weights: np.ndarray,
+) -> dict[str, pd.DataFrame] | None:
+    """Load the full historical + SSP370 record and return annual subbasin means.
+
+    Iterates over ALL_HIST_YEARS (historical_bc scenario) then ALL_SSP370_YEARS
+    (ssp370_bc scenario), skipping any year whose file is absent on S3.  For
+    each present year the daily DataArray is averaged over time to produce an
+    annual mean, which is then aggregated to subbasins via weighted_basin_mean.
+
+    Args:
+        fs: Anonymous s3fs filesystem.
+        gcm_info: Entry from GCM_CATALOG.
+        masks: Subbasin boolean masks from grid.build_subbasin_masks.
+        cos_weights: Cosine-latitude weights from grid.build_subbasin_masks.
+
+    Returns:
+        Dict mapping variable → DataFrame with shape (n_years, n_subbasins).
+        Index: integer years (sorted).  Columns: subbasin names.
+        Returns None if no data could be loaded for any variable.
+    """
+    gcm_label = gcm_info["dir_base"]
+    year_scenario_pairs = (
+        [(y, EXP_HIST) for y in ALL_HIST_YEARS]
+        + [(y, EXP_SSP370) for y in ALL_SSP370_YEARS]
+    )
+
+    results = {}
+    for variable in VARIABLES:
+        print(f"  [{gcm_label}] {variable}: loading full timeseries ...")
+        records: dict[int, dict[str, float]] = {}
+        for year, scenario in year_scenario_pairs:
+            da = open_annual_file(fs, gcm_info, scenario, variable, year)
+            if da is None:
+                continue
+            annual_mean_2d = da.mean(dim="time").values  # (ny, nx)
+            records[year] = {
+                name: weighted_basin_mean(annual_mean_2d, mask, cos_weights)
+                for name, mask in masks.items()
+            }
+
+        if not records:
+            continue
+
+        df = pd.DataFrame.from_dict(records, orient="index")
+        df.index.name = "year"
+        df.sort_index(inplace=True)
         results[variable] = df
 
     return results if results else None

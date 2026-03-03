@@ -14,9 +14,16 @@ COORD_BASE = f"{BUCKET}/downscaled_products/wrf_coordinates"
 
 DOMAIN = "d02"  # 9-km domain
 
-# Historical and future time periods
+# Historical and future time periods (30-year climatology windows)
 HIST_YEARS = list(range(1980, 2010))   # 1980–2009
 FUTURE_YEARS = list(range(2070, 2100)) # 2070–2099
+
+# Full available record for timeseries analysis
+# Historical BC files typically cover 1950–2014; SSP370 BC covers 2015–2100.
+# open_annual_file returns None for any year not present on S3, so these ranges
+# are inclusive upper bounds rather than guarantees.
+ALL_HIST_YEARS = list(range(1950, 2015))    # 1950–2014 (historical_bc)
+ALL_SSP370_YEARS = list(range(2015, 2101))  # 2015–2100 (ssp370_bc)
 
 # All 16 GCMs available with both historical_bc and ssp370_bc variants.
 # Each entry: (gcm_label_in_filename, variant, directory_base_name)

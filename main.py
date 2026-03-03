@@ -21,8 +21,12 @@ import s3fs
 
 from src.catalog import GCM_CATALOG, build_s3_path, EXP_HIST, EXP_SSP370, HIST_YEARS, FUTURE_YEARS
 from src.grid import load_wrf_coords, build_subbasin_masks
-from src.climate import process_gcm
-from src.output import save_gcm_results, plot_gcm_maps, save_ensemble_summary, plot_ensemble_maps
+from src.climate import process_gcm, build_annual_timeseries
+from src.output import (
+    save_gcm_results, plot_gcm_maps, plot_gcm_spaghetti,
+    save_ensemble_summary, plot_ensemble_maps, plot_ensemble_spaghetti,
+    plot_gcm_timeseries, plot_timeseries_deviations,
+)
 
 SHAPEFILE = Path(__file__).parent / "GW_SubBasins"
 RESULTS_DIR = Path(__file__).parent / "results"
@@ -33,8 +37,11 @@ def parse_args() -> argparse.Namespace:
     parser.add_argument(
         "--gcm-index",
         type=int,
+        nargs="+",
         default=None,
-        help="Process only the GCM at this index in GCM_CATALOG (0-based). "
+        metavar="N",
+        help="Process only the GCMs at these indices in GCM_CATALOG (0-based). "
+             "Accepts one or more values (e.g. --gcm-index 0 1 2 3). "
              "Omit to run all 16 GCMs.",
     )
     parser.add_argument(
@@ -79,10 +86,11 @@ def main() -> None:
     print(f"  {len(masks)} subbasins with at least one grid cell")
 
     # Step 3: Determine which GCMs to process
-    gcms_to_run = GCM_CATALOG if args.gcm_index is None else [GCM_CATALOG[args.gcm_index]]
+    gcms_to_run = GCM_CATALOG if args.gcm_index is None else [GCM_CATALOG[i] for i in args.gcm_index]
 
     # Step 4: Process each GCM
     all_results: dict[str, dict] = {}
+    all_ts: dict[str, dict] = {}
     for i, gcm_info in enumerate(gcms_to_run):
         label = gcm_info["dir_base"]
         print(f"\n[{i + 1}/{len(gcms_to_run)}] Processing {label} ...")
@@ -94,6 +102,11 @@ def main() -> None:
         save_gcm_results(label, result, RESULTS_DIR)
         print(f"  Generating per-model figures for {label} ...")
         plot_gcm_maps(label, result, str(SHAPEFILE), RESULTS_DIR)
+        plot_gcm_spaghetti(label, result, RESULTS_DIR)
+        ts = build_annual_timeseries(fs, gcm_info, masks, cos_weights)
+        if ts is not None:
+            all_ts[label] = ts
+            plot_gcm_timeseries(label, ts, RESULTS_DIR)
         print(f"  Saved results for {label}")
 
     if not all_results:
@@ -105,9 +118,14 @@ def main() -> None:
     summaries = save_ensemble_summary(all_results, RESULTS_DIR)
     print(f"  Saved ensemble summaries to {RESULTS_DIR}")
 
-    # Step 6: Spatial maps
+    # Step 6: Spatial maps and spaghetti plots
     print("Generating spatial delta maps ...")
     plot_ensemble_maps(summaries, str(SHAPEFILE), RESULTS_DIR)
+    plot_ensemble_spaghetti(summaries, RESULTS_DIR)
+
+    if all_ts:
+        print("Generating ensemble timeseries figure ...")
+        plot_timeseries_deviations(all_ts, RESULTS_DIR)
 
     print(f"\nDone. Results in {RESULTS_DIR}")
 
