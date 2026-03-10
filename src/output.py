@@ -4,8 +4,8 @@ Results saving and visualisation for climate delta analysis.
 Output directory layout:
     results/
         <gcm_dir_base>/
-            t2_delta.csv        # (12 months) × (85 subbasins), units: K
-            prec_delta.csv      # (12 months) × (85 subbasins), units: mm day-1
+            t2_delta.csv        # (12 months) × (52 basins), units: K
+            prec_delta.csv      # (12 months) × (52 basins), units: mm day-1
         ensemble_t2_delta_summary.csv
         ensemble_prec_delta_summary.csv
         figures/
@@ -71,15 +71,15 @@ def plot_gcm_maps(
     Args:
         gcm_label: Directory-base name of the GCM (used as subfolder name).
         gcm_results: Dict variable → DataFrame (12 months × n_subbasins).
-        shapefile_path: Path to GW_SubBasins shapefile.
+        shapefile_path: Path to GW_Shapefile shapefile.
         output_dir: Root results directory; figures go in output_dir/gcm_label/figures/.
     """
     fig_dir = output_dir / gcm_label / "figures"
     fig_dir.mkdir(parents=True, exist_ok=True)
 
     basins = gpd.read_file(shapefile_path).to_crs("EPSG:4326")
-    if "SUBBASIN_N" in basins.columns:
-        basins["_label"] = basins["SUBBASIN_N"].fillna(
+    if "BASIN_NAME" in basins.columns:
+        basins["_label"] = basins["BASIN_NAME"].fillna(
             pd.Series(basins.index.astype(str), index=basins.index)
         )
     else:
@@ -352,15 +352,15 @@ def plot_ensemble_maps(
 
     Args:
         summaries: Output of save_ensemble_summary.
-        shapefile_path: Path to GW_SubBasins shapefile.
+        shapefile_path: Path to GW_Shapefile shapefile.
         output_dir: Root results directory.
     """
     fig_dir = output_dir / "figures"
     fig_dir.mkdir(parents=True, exist_ok=True)
 
     basins = gpd.read_file(shapefile_path).to_crs("EPSG:4326")
-    if "SUBBASIN_N" in basins.columns:
-        basins["_label"] = basins["SUBBASIN_N"].fillna(
+    if "BASIN_NAME" in basins.columns:
+        basins["_label"] = basins["BASIN_NAME"].fillna(
             pd.Series(basins.index.astype(str), index=basins.index)
         )
     else:

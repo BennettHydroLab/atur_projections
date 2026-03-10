@@ -204,6 +204,18 @@ td.neg { color: #f87171; }
 .badge-prec { background: rgba(56,189,248,.15); color: var(--prec); }
 .badge-temp { background: rgba(251,146,60,.15); color: var(--temp); }
 
+/* ── Basin-panel show/hide ── */
+.basin-panel { display: none; }
+.basin-panel.active { display: block; }
+
+/* ── Pending (disabled) tab ── */
+.tab-btn.tab-pending {
+  opacity: 0.4;
+  cursor: not-allowed;
+  border-style: dashed;
+}
+.tab-btn.tab-pending:hover { color: var(--muted); border-color: var(--border); }
+
 /* ── Responsive ── */
 @media (max-width: 600px) {
   nav { gap: 1rem; padding: 0 1rem; }

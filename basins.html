@@ -1,0 +1,154 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Basin Profiles — ATUR Projections</title>
+  <link rel="stylesheet" href="styles.css"/>
+</head>
+<body>
+<nav>
+  <a class="brand" href="index.html">ATUR Projections</a>
+  <a href="index.html">Home</a>
+  <a href="ensemble.html">Ensemble</a>
+  <a href="gcm.html">Per-GCM</a>
+  <a href="basins.html" class="active">Basin Profiles</a>
+</nav>
+
+<div class="hero">
+  <h1>Basin Profiles</h1>
+  <p>Per-basin GCM spaghetti plots — one line per model, bold ensemble mean.
+     Temperature in °C, precipitation in mm day⁻¹.
+     SSP3-7.0, 2070–2099 vs 1980–2009.</p>
+</div>
+
+<div class="container">
+
+  <div class="controls">
+    <label for="basin-select">Basin</label>
+    <select id="basin-select">
+      <option value="agua_fria">AGUA FRIA</option>
+      <option value="aravaipa_canyon">ARAVAIPA CANYON</option>
+      <option value="big_sandy">BIG SANDY</option>
+      <option value="bill_williams">BILL WILLIAMS</option>
+      <option value="bonita_creek">BONITA CREEK</option>
+      <option value="butler_valley">BUTLER VALLEY</option>
+      <option value="cienega_creek">CIENEGA CREEK</option>
+      <option value="coconino_plateau">COCONINO PLATEAU</option>
+      <option value="detrital_valley">DETRITAL VALLEY</option>
+      <option value="donnelly_wash">DONNELLY WASH</option>
+      <option value="douglas_ama">DOUGLAS AMA</option>
+      <option value="dripping_spring_wash">DRIPPING SPRING WASH</option>
+      <option value="duncan_valley">DUNCAN VALLEY</option>
+      <option value="gila_bend">GILA BEND</option>
+      <option value="grand_wash">GRAND WASH</option>
+      <option value="harquahala_ina">HARQUAHALA INA</option>
+      <option value="hualapai_valley_ina">HUALAPAI VALLEY INA</option>
+      <option value="joseph_city_ina">JOSEPH CITY INA</option>
+      <option value="kanab_plateau">KANAB PLATEAU</option>
+      <option value="lake_havasu">LAKE HAVASU</option>
+      <option value="lake_mohave">LAKE MOHAVE</option>
+      <option value="little_colorado_river_plateau">LITTLE COLORADO RIVER PLATEAU</option>
+      <option value="lower_gila">LOWER GILA</option>
+      <option value="lower_san_pedro">LOWER SAN PEDRO</option>
+      <option value="mcmullen_valley">MCMULLEN VALLEY</option>
+      <option value="meadview">MEADVIEW</option>
+      <option value="morenci">MORENCI</option>
+      <option value="paria">PARIA</option>
+      <option value="parker">PARKER</option>
+      <option value="peach_springs">PEACH SPRINGS</option>
+      <option value="phoenix_ama">PHOENIX AMA</option>
+      <option value="pinal_ama">PINAL AMA</option>
+      <option value="prescott_ama">PRESCOTT AMA</option>
+      <option value="ranegras_plain">RANEGRAS PLAIN</option>
+      <option value="sacramento_valley">SACRAMENTO VALLEY</option>
+      <option value="safford">SAFFORD</option>
+      <option value="salt_river">SALT RIVER</option>
+      <option value="san_bernardino_valley">SAN BERNARDINO VALLEY</option>
+      <option value="san_rafael">SAN RAFAEL</option>
+      <option value="san_simon_wash">SAN SIMON WASH</option>
+      <option value="santa_cruz_ama">SANTA CRUZ AMA</option>
+      <option value="shivwits_plateau">SHIVWITS PLATEAU</option>
+      <option value="tiger_wash">TIGER WASH</option>
+      <option value="tonto_creek">TONTO CREEK</option>
+      <option value="tucson_ama">TUCSON AMA</option>
+      <option value="upper_hassayampa">UPPER HASSAYAMPA</option>
+      <option value="upper_san_pedro">UPPER SAN PEDRO</option>
+      <option value="verde_river">VERDE RIVER</option>
+      <option value="virgin_river">VIRGIN RIVER</option>
+      <option value="western_mexican_drainage">WESTERN MEXICAN DRAINAGE</option>
+      <option value="willcox_ama">WILLCOX AMA</option>
+      <option value="yuma">YUMA</option>
+    </select>
+  </div>
+
+  <div class="fig-row">
+    <div class="fig-wrap">
+      <img id="basin-t2-img" src="results/figures/basins/agua_fria_t2.png" alt="Temperature delta"/>
+      <div class="fig-caption">Temperature Δ — per-GCM spaghetti + ensemble mean</div>
+    </div>
+    <div class="fig-wrap">
+      <img id="basin-prec-img" src="results/figures/basins/agua_fria_prec.png" alt="Precipitation delta"/>
+      <div class="fig-caption">Precipitation Δ — per-GCM spaghetti + ensemble mean</div>
+    </div>
+  </div>
+
+  <!-- Statewide context -->
+  <div class="section-title" style="margin-top:3rem;">Statewide context</div>
+  <div class="tabs" id="ctx-tabs">
+    <button class="tab-btn active" data-tab="ctx-prec">Precipitation</button>
+    <button class="tab-btn" data-tab="ctx-temp">Temperature</button>
+  </div>
+
+  <div id="tab-ctx-prec" class="tab-panel active">
+    <div class="fig-row">
+      <div class="fig-wrap">
+        <img src="results/figures/ensemble_prec_delta_all_months.png" alt="Ensemble precip delta all months"/>
+        <div class="fig-caption">Monthly precipitation Δ — ensemble mean choropleth</div>
+      </div>
+      <div class="fig-wrap">
+        <img src="results/figures/ensemble_prec_delta_spaghetti.png" alt="Ensemble precip spaghetti"/>
+        <div class="fig-caption">Precipitation Δ — all basins spaghetti</div>
+      </div>
+    </div>
+  </div>
+
+  <div id="tab-ctx-temp" class="tab-panel">
+    <div class="fig-row">
+      <div class="fig-wrap">
+        <img src="results/figures/ensemble_t2_delta_all_months.png" alt="Ensemble temperature delta all months"/>
+        <div class="fig-caption">Monthly temperature Δ — ensemble mean choropleth</div>
+      </div>
+      <div class="fig-wrap">
+        <img src="results/figures/ensemble_t2_delta_spaghetti.png" alt="Ensemble temperature spaghetti"/>
+        <div class="fig-caption">Temperature Δ — all basins spaghetti</div>
+      </div>
+    </div>
+  </div>
+
+</div>
+
+<script>
+const t2Img   = document.getElementById('basin-t2-img');
+const precImg = document.getElementById('basin-prec-img');
+
+document.getElementById('basin-select').addEventListener('change', function () {
+  const safe = this.value;
+  t2Img.src   = `results/figures/basins/${safe}_t2.png`;
+  precImg.src = `results/figures/basins/${safe}_prec.png`;
+  t2Img.alt   = this.options[this.selectedIndex].text + ' temperature delta';
+  precImg.alt = this.options[this.selectedIndex].text + ' precipitation delta';
+});
+
+document.querySelectorAll('#ctx-tabs .tab-btn').forEach(btn => {
+  btn.addEventListener('click', () => {
+    document.querySelectorAll('#ctx-tabs .tab-btn').forEach(b => b.classList.remove('active'));
+    document.getElementById('tab-ctx-prec').classList.remove('active');
+    document.getElementById('tab-ctx-temp').classList.remove('active');
+    btn.classList.add('active');
+    document.getElementById('tab-' + btn.dataset.tab).classList.add('active');
+  });
+});
+</script>
+</body>
+</html>

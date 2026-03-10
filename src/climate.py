@@ -35,21 +35,37 @@ VARIABLES = ["t2", "prec"]
 # ---------------------------------------------------------------------------
 
 def decode_yyyymmdd(ds: xr.Dataset) -> xr.Dataset:
-    """Replace integer yyyymmdd time coordinate with proper datetime64 values.
+    """Normalise the time coordinate to datetime64 and rename it to 'time'.
+
+    Handles two encodings found across WUS-D3 GCMs:
+
+    1. yyyymmdd integer (most models) — the time/day variable contains plain
+       integers like 19800115 or 19800115.0.  Cast to int, then parse with
+       strptime format "%Y%m%d".
+
+    2. CF convention (e.g. noresm2-mm) — xarray's default decode_times=True
+       already converted the variable to datetime64[ns] when the file has a
+       standard "days since …" units attribute.  In this case no further
+       parsing is needed; just rename if necessary.
 
     The time coordinate may be named 'time' or 'day' depending on the file.
-    Values may be stored as floats (e.g. 19800115.0) so cast to int before
-    string conversion.
 
     Args:
-        ds: Dataset whose time coordinate contains integers like 19800115.
+        ds: Dataset as returned by xr.open_dataset.
 
     Returns:
         Dataset with a 'time' coord of np.datetime64 values.
     """
     time_var = "time" if "time" in ds.coords else "day"
     raw = ds[time_var].values
-    # Cast to int to strip any decimal part (e.g. 19800901.0 → 19800901)
+
+    # Case 1: already datetime64 — xarray decoded the CF time units for us
+    if np.issubdtype(raw.dtype, np.datetime64):
+        if time_var != "time":
+            ds = ds.rename({time_var: "time"})
+        return ds
+
+    # Case 2: yyyymmdd integer encoding — cast to int, strip decimal part
     dates = pd.to_datetime(raw.astype(int).astype(str), format="%Y%m%d")
     if time_var != "time":
         ds = ds.rename({time_var: "time"})
